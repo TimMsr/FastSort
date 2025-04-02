@@ -22,19 +22,24 @@ public class FastSort {
         int[] countNeg = new int[range + 1];
         int[] zeroCount = new int[1];
 
-        processInput(input, sortPos, sortNeg, countPos, countNeg, zeroCount);
+        processInput(input, sortPos, sortNeg, countPos, countNeg, zeroCount, max);
     }
 
-    public static void processInput(int[] input, int[] sortPos, int[] sortNeg, int[] countPos, int[] countNeg, int[] zeroCount) {
+    public static void processInput(int[] input, int[] sortPos, int[] sortNeg, int[] countPos, int[] countNeg, int[] zeroCount, int max) {
         for (int i = 0; i < input.length; i++) {
             if(input[i]==0) { // zero case
                 zeroCount[0]++;
             } else if (input[i]>0) { // positive case
-                sortPos[sortPos[i]] = input[i];
-                countPos[0]++;
+                sortPos[input[i]] = input[i];
+                countPos[input[i]]++;
             } else { // negative case
-
+                sortNeg[input[i]+max] = input[i];
+                countNeg[input[i]+max]++;
             }
         }
+    }
+
+    public static void printSorted(int[] sortPos, int[] sortNeg, int[] countPos, int[] countNeg, int[] zeroCount, int max) {
+        
     }
 }
