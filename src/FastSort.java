@@ -1,6 +1,6 @@
 public class FastSort {
     public static void main(String[] args) {
-        int[] input = {-3, 0, 2, -3, 2, 5, -1};  // your original data
+        int[] input = {-3, 0, 2, -3, 2, 5, -1};
 
         int max = input[0];
         int min = input[0];
@@ -14,7 +14,7 @@ public class FastSort {
             }
         }
 
-        int range = Math.max(Math.abs(max), Math.abs(min));
+        int range = max - min;
 
         int[] sortPos = new int[range + 1];
         int[] sortNeg = new int[range + 1];
@@ -22,13 +22,19 @@ public class FastSort {
         int[] countNeg = new int[range + 1];
         int[] zeroCount = new int[1];
 
-        System.out.println("Max: " + max);
-        System.out.println("Min: " + min);
-
-        // processInput(input, sortPos, sortNeg, countPos, countNeg, zeroCount);
+        processInput(input, sortPos, sortNeg, countPos, countNeg, zeroCount);
     }
 
     public static void processInput(int[] input, int[] sortPos, int[] sortNeg, int[] countPos, int[] countNeg, int[] zeroCount) {
-        // implement sorting logic
+        for (int i = 0; i < input.length; i++) {
+            if(input[i]==0) { // zero case
+                zeroCount[0]++;
+            } else if (input[i]>0) { // positive case
+                sortPos[sortPos[i]] = input[i];
+                countPos[0]++;
+            } else { // negative case
+
+            }
+        }
     }
 }
