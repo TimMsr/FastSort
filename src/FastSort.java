@@ -14,7 +14,7 @@ public class FastSort {
             }
         }
 
-        int range = max - min;
+        int range = max + Math.abs(min);
 
         int[] sortPos = new int[range + 1];
         int[] sortNeg = new int[range + 1];
@@ -41,17 +41,22 @@ public class FastSort {
     }
 
     public static void printSorted(int[] sortPos, int[] sortNeg, int[] countPos, int[] countNeg, int[] zeroCount, int max) {
-        for (int i = max - 1; i >= 0; i--) {
+        for (int i = max - 1; i >= 0; i--) { //negative case
             if(countNeg[i]>0) {
                 for (int j = 0; j < countNeg[i]; j++) {
-                    System.out.print(-(i-max) + " ");
+                    System.out.print(-(i + 1) + " ");
                 }
             }
-            
         }
-        for (int i = 0; i < zeroCount[0]; i++) {
+        for (int i = 0; i < zeroCount[0]; i++) { //print zeros
             System.out.print("0 ");
         }
-        
+        for (int i = 0; i < countPos.length; i++) { //positive case
+            if(countPos[i]>0) {
+                for (int j = 0; j < countPos[i]; j++) {
+                    System.out.print(i + " ");
+                }
+            }
+        }
     }
 }
