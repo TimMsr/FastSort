@@ -23,6 +23,7 @@ public class FastSort {
         int[] zeroCount = new int[1];
 
         processInput(input, sortPos, sortNeg, countPos, countNeg, zeroCount, max);
+        printSorted(sortPos, sortNeg, countPos, countNeg, zeroCount, max);
     }
 
     public static void processInput(int[] input, int[] sortPos, int[] sortNeg, int[] countPos, int[] countNeg, int[] zeroCount, int max) {
@@ -40,6 +41,17 @@ public class FastSort {
     }
 
     public static void printSorted(int[] sortPos, int[] sortNeg, int[] countPos, int[] countNeg, int[] zeroCount, int max) {
+        for (int i = max - 1; i >= 0; i--) {
+            if(countNeg[i]>0) {
+                for (int j = 0; j < countNeg[i]; j++) {
+                    System.out.print(-(i-max) + " ");
+                }
+            }
+            
+        }
+        for (int i = 0; i < zeroCount[0]; i++) {
+            System.out.print("0 ");
+        }
         
     }
 }
