@@ -138,11 +138,13 @@ public class FastSort {
         int[] sizes = {10, 100, 1000, 10000, 100000};
         Random rand = new Random();
 
-        // Set Number of iterations for benchmarking. Used to reduce set-up time and actually calculate run time.
-        int iterations = 100; 
+        
+        
+
 
         for (int size : sizes) {
-            
+            int iterations = size < 1000 ? 1000 : 100;
+
             // Generate a random array with values in [-10000000, 10000000].
             int[] testArray = generateRandomArray(size, -10000000, 10000000, rand);
             long avgTime = benchmarkPseudoSort(testArray, iterations);
