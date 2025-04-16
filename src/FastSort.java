@@ -7,60 +7,65 @@ public class FastSort {
             return;
         
 
-        // STEP 1: Find maximum and minimum in the input.
+        //Finds the min and max of the input array.
         int max = input[0];
         int min = input[0];
         for (int i = 1; i < input.length; i++) {
-            int val = input[i];
-            if (val > max) {
-                max = val;
+            int cur = input[i];
+            if (cur > max) {
+                max = cur;
             }
-            if (val < min) {
-                min = val;
+            if (cur < min) {
+                min = cur;
             }
         }
 
-        // Use offset = max( max, |min| ) to properly map negative values.
+        //Maps the negative numbers to positive indices.
+        //The offset is the absolute value of the minimum number.
         int offset = Math.max(max, Math.abs(min));
 
-        // STEP 2: Declare arrays.
-        // For positive numbers:
-        int[] b = new int[offset + 1];      // Stores positive number on first occurrence.
-        int[] countp = new int[offset + 1];   // Counts occurrences of positive numbers.
-        // For negative numbers:
-        int[] k = new int[offset + 1];        // Stores first occurrence of mapped negatives.
-        int[] countn = new int[offset + 1];   // Counts occurrences of negatives.
-        // For zeros:
+        // Declaring the arrays according to the paper
+        
+        //positve numbers:
+        int[] b = new int[offset + 1];      //Stores positive number on first occurrence.
+        int[] countp = new int[offset + 1];   //Counts occurrences of positive numbers.
+        
+        //negative numbers:
+        int[] k = new int[offset + 1];        //Stores first occurrence of mapped negatives.
+        int[] countn = new int[offset + 1];   //Counts occurrences of negatives.
+        
+        //zeros:
         int zeroCount = 0;
 
-        // STEP 3: Process each element in input.
-        // According to the pseudo-code using nested if/else
+        //Process the input array
+        //According to the pseudo-code using nested if statements.]
+        //This iterates  through the input array and counts the occurrences of each number.
         for (int x = 0; x < input.length; x++) {
-            int val = input[x];
-            if (val == 0) {
+            int cur = input[x];
+            if (cur == 0) {
                 zeroCount++;
-            } else if (val > 0) {
+            } else if (cur > 0) {
                 // Process positive numbers
-                if (b[val] == 0) {  // Not yet stored
-                    b[val] = val;
+                if (b[cur] == 0) {  // Not yet stored
+                    b[cur] = cur;
                 }
-                if (b[val] == val) {
-                    countp[val]++;
+                if (b[cur] == cur) {
+                    countp[cur]++;
                 }
             } else { // Negative values
-                // Map negative value: index = val + offset.
-                int index = val + offset;
+                // Map negative value: index = cur + offset.
+                int index = cur + offset;
                 if (k[index] == 0) {  // Not yet stored
-                    k[index] = val;
+                    k[index] = cur;
                 }
-                if (k[index] == val) {
+                if (k[index] == cur) {
                     countn[index]++;
                 }
             }
         }
 
-        // STEP 4: Reconstruct sorted output.
-        // We build the sorted output into a StringBuilder and then discard it.
+        //Reconstructs sorted output.
+        //WE build the output in a string buffer to avoid multiple print calls, hence improving the performance of the program
         StringBuilder sb = new StringBuilder();
 
         // Output negatives: iterate from index = offset downto 1.
@@ -73,7 +78,7 @@ public class FastSort {
             }
         }
 
-        // Output zeros.
+        //Output zeros.
         for (int i = 0; i < zeroCount; i++) {
             sb.append("0 ").append(" ");
         }
@@ -88,6 +93,8 @@ public class FastSort {
         }
 
         // (Optional) If needed, you can return sb.toString() for verification.
+        //However be careful with large arrays, as this will create a large string, so change the input size.
+        //System.out.println(sb.toString());
         // For benchmarking, we simply discard the result.
     }
 
@@ -135,11 +142,12 @@ public class FastSort {
         Random rand = new Random();
 
         // Set Number of iterations for benchmarking. Used to reduce set-up time and actually calculate run time.
-        int iterations = 10000; 
+        int iterations = 1000; 
 
         for (int size : sizes) {
-            // Generate a random array with values in [-1000, 1000].
-            int[] testArray = generateRandomArray(size, -1000, 1000, rand);
+            
+            // Generate a random array with values in [-10000, 10000].
+            int[] testArray = generateRandomArray(size, -10000, 10000, rand);
             long avgTime = benchmarkPseudoSort(testArray, iterations);
             System.out.println("Size: " + size
                     + " | Average execution time: " + avgTime + " ns ("
