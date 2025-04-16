@@ -99,9 +99,9 @@ public class FastSort {
     }
 
     /**
-     * Benchmarks the fastSortPseudo method.
-     * The method performs a warm-up phase followed by a number of iterations,
-     * measuring the execution time with System.nanoTime().
+     * Benchmarks the code's execution time.
+     * The method performs a warm-up phase followed by a number of iterations (which we set at 1000, gives a wide range of output to see the performance).,
+     * We then measure the execution time with System.nanoTime().
      *
      * @param input The array to sort.
      * @param iterations The number of timed iterations.
@@ -109,7 +109,7 @@ public class FastSort {
      */
     public static long benchmarkPseudoSort(int[] input, int iterations) {
         long totalTime = 0;
-        // Warm-up phase: run a fraction of iterations to allow JVM optimizations.
+        // Warm-up phase: run a fraction of iterations to allow JVM optimizations, allowing us to get the best performance out of the code.
         int warmup = iterations / 10;
         for (int i = 0; i < warmup; i++) {
             fastSortPseudo(input);
@@ -124,10 +124,7 @@ public class FastSort {
         return totalTime / iterations;
     }
 
-    /**
-     * Utility method to generate an array with random integers.
-     * Values are generated between minValue and maxValue (inclusive).
-     */
+    //Below is the utility method to generate a random array of integers, based on the min and max values.
     public static int[] generateRandomArray(int size, int minValue, int maxValue, Random rand) {
         int[] array = new int[size];
         for (int i = 0; i < size; i++) {
@@ -138,16 +135,16 @@ public class FastSort {
 
     public static void main(String[] args) {
         // Define input sizes for benchmarking.
-        int[] sizes = {10, 100, 10000, 100000};
+        int[] sizes = {10, 100, 1000, 10000, 100000};
         Random rand = new Random();
 
         // Set Number of iterations for benchmarking. Used to reduce set-up time and actually calculate run time.
-        int iterations = 1000; 
+        int iterations = 100; 
 
         for (int size : sizes) {
             
-            // Generate a random array with values in [-10000, 10000].
-            int[] testArray = generateRandomArray(size, -10000, 10000, rand);
+            // Generate a random array with values in [-10000000, 10000000].
+            int[] testArray = generateRandomArray(size, -10000000, 10000000, rand);
             long avgTime = benchmarkPseudoSort(testArray, iterations);
             System.out.println("Size: " + size
                     + " | Average execution time: " + avgTime + " ns ("
