@@ -2,19 +2,10 @@ import java.util.Random;
 
 public class FastSort {
 
-    /**
-     * Fast sort method that mimics the pseudo-code from the paper.
-     * Processes an array by:
-     * 1. Finding max and min;
-     * 2. Separating and counting zeros, positive, and negative numbers
-     *    using auxiliary arrays.
-     * 3. Reconstructing a sorted output (here built into a StringBuilder).
-     *
-     * This version discards printing the output to avoid I/O overhead in benchmarking.
-     */
     public static void fastSortPseudo(int[] input) {
         if (input.length == 0)
             return;
+        
 
         // STEP 1: Find maximum and minimum in the input.
         int max = input[0];
@@ -143,20 +134,10 @@ public class FastSort {
         int[] sizes = {10, 100, 10000, 100000};
         Random rand = new Random();
 
-        // Set iterations based on size (more iterations for small sizes).
-        int iterationsSmall = 10000;  // for size 10 and 100
-        int iterationsMedium = 1000;  // for size 10,000
-        int iterationsLarge = 100;    // for size 100,000
+        // Set Number of iterations for benchmarking. Used to reduce set-up time and actually calculate run time.
+        int iterations = 10000; 
 
         for (int size : sizes) {
-            int iterations;
-            if (size <= 100) {
-                iterations = iterationsSmall;
-            } else if (size <= 10000) {
-                iterations = iterationsMedium;
-            } else {
-                iterations = iterationsLarge;
-            }
             // Generate a random array with values in [-1000, 1000].
             int[] testArray = generateRandomArray(size, -1000, 1000, rand);
             long avgTime = benchmarkPseudoSort(testArray, iterations);
