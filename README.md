@@ -1,4 +1,4 @@
-Instructions of running the code:
+Instructions for running the code:
 1. Clone the repository or save the file under FastSort.java
 2. Compile the code: javac FastSort.java
 3. Run the code: java FastSort
