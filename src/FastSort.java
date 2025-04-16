@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class fastpseudocode {
+public class FastSort {
 
     /**
      * Fast sort method that mimics the pseudo-code from the paper.
