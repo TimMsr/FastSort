@@ -71,14 +71,15 @@ public class FastSort {
                 }
             }
         }
-        // NOTE: we discard sb.toString() in benchmark to avoid I/O overhead
+        // (Optional) If needed, you can return sb.toString() for verification.
+        //However be careful with large arrays, as this will create a large string, so change the input size.
+        //System.out.println(sb.toString());
+        // For benchmarking, we simply discard the result.
     }
 
-    /**
-     * benchmarkPseudoSort: measures average runtime, reusing arrays to remove GC overhead
-     */
+    //benchmarkPseudoSort: measures average runtime, reusing arrays to remove GC overhead, since we were having issues with low input sizes taking too much time.
     public static long benchmarkPseudoSort(int[] input, int iterations) {
-        // 1) find min & max in O(n) — exactly as paper requires :contentReference[oaicite:4]{index=4}&#8203;:contentReference[oaicite:5]{index=5}
+        // 1) find min & max in O(n) — same as paper requires.
         int max = input[0];
         int min = input[0];
         for (int i = 1; i < input.length; i++) {
@@ -86,20 +87,25 @@ public class FastSort {
             if (cur > max) max = cur;
             if (cur < min) min = cur;
         }
-        int offset = Math.max(max, Math.abs(min));  // maps negatives to [0..offset]
+        int offset = Math.max(max, Math.abs(min));  // maps negatives to offset
 
-        // 2) pre-alloc arrays once per size (avoid new int[] in each run) — matches Paper’s single allocation per size :contentReference[oaicite:6]{index=6}&#8203;:contentReference[oaicite:7]{index=7}
-        int[] b      = new int[offset + 1];
+        // 2) pre-alloc arays once per size (avoid new int[] in each run (hence increasing performance)) — matches Paper’s single allocation per size
+        int[] b = new int[offset + 1];
         int[] countp = new int[offset + 1];
-        int[] k      = new int[offset + 1];
+        int[] k = new int[offset + 1];
         int[] countn = new int[offset + 1];
 
         long totalTime = 0;
         int warmup = iterations / 10;  // warm-up portion to trigger JIT
 
-        // warm-up runs (not timed)
+        // warm-up runs (not timed), to reduce JIT overhead
+        // This is to ensure that the JIT compiler optimizes the code before we start measuring the time.
+
+        // The fill command is done so that we can clear the arrays before each run, as we are reusing them, because otherwise they would
+        // blead over from the previous run, and we would not be able to measure the time correctly.
+        // This is important for the benchmark, as we want to measure the time taken by the algorithm, not the time taken by the garbage collectiuon.
         for (int i = 0; i < warmup; i++) {
-            Arrays.fill(b, 0);      // clear counts :contentReference[oaicite:8]{index=8}&#8203;:contentReference[oaicite:9]{index=9}
+            Arrays.fill(b, 0);      // clear counts
             Arrays.fill(countp, 0);
             Arrays.fill(k, 0);
             Arrays.fill(countn, 0);
@@ -131,14 +137,17 @@ public class FastSort {
     }
 
     public static void main(String[] args) {
+        // defines the input sizes for benchmarking (used the ones from the paper)
         int[] sizes = {10, 100, 1000, 10000, 100000};
         Random rand = new Random();
 
         for (int size : sizes) {
-            int iterations = size < 1000 ? 1000 : 100;  // more runs for small n
+            int iterations = size < 1000 ? 1000 : 100;  // more runs for small n to decrease overhead
 
+
+            // Here we use the 8 digits from the paper, but you can change the range to test other values, which if reduced will make it significantly faster.
             int[] testArray = generateRandomArray(size, -10000000, 10000000, rand);
-            long avgTime = benchmarkPseudoSort(testArray, iterations);  // CAPTURE avg runtime
+            long avgTime = benchmarkPseudoSort(testArray, iterations);  // capture avg runtime
             System.out.println("Size: " + size
                     + " | Average execution time: " + avgTime + " ns ("
                     + (avgTime / 1e9) + " s) over " + iterations + " iterations.");
