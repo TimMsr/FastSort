@@ -1,43 +1,23 @@
 import java.util.Random;
+import java.util.Arrays;  // for Arrays.fill
 
 public class FastSort {
 
-    public static void fastSortPseudo(int[] input) {
+    /**
+     * @param input   the array to be sorted
+     * @param offset  the offset for negative integers
+     * @param b       array to store first occurrences of pos integers
+     * @param countp  array to count occurrences of pos integers
+     * @param k       array to store first occurrences of neg integers
+     * @param countn  array to count occurrences of neg integers
+     */
+    public static void fastSortPseudo(int[] input, int offset, int[] b, int[] countp, int[] k, int[] countn) {
         if (input.length == 0)
-            return;
-        
+            return;  //nothing to sort
 
-        //Finds the min and max of the input array.
-        int max = input[0];
-        int min = input[0];
-        for (int i = 1; i < input.length; i++) {
-            int cur = input[i];
-            if (cur > max) {
-                max = cur;
-            }
-            if (cur < min) {
-                min = cur;
-            }
-        }
+        int zeroCount = 0;  // zero's are counted separately
 
-        //Maps the negative numbers to positive indices.
-        //The offset is the absolute value of the minimum number.
-        int offset = Math.max(max, Math.abs(min));
-
-        // Declaring the arrays according to the paper
-        
-        //positve numbers:
-        int[] b = new int[offset + 1];      //Stores positive number on first occurrence.
-        int[] countp = new int[offset + 1];   //Counts occurrences of positive numbers.
-        
-        //negative numbers:
-        int[] k = new int[offset + 1];        //Stores first occurrence of mapped negatives.
-        int[] countn = new int[offset + 1];   //Counts occurrences of negatives.
-        
-        //zeros:
-        int zeroCount = 0;
-
-        //Process the input array
+         //Process the input array
         //According to the pseudo-code using nested if statements.]
         //This iterates  through the input array and counts the occurrences of each number.
         for (int x = 0; x < input.length; x++) {
@@ -91,40 +71,57 @@ public class FastSort {
                 }
             }
         }
-
-        // (Optional) If needed, you can return sb.toString() for verification.
-        //However be careful with large arrays, as this will create a large string, so change the input size.
-        //System.out.println(sb.toString());
-        // For benchmarking, we simply discard the result.
+        // NOTE: we discard sb.toString() in benchmark to avoid I/O overhead
     }
 
     /**
-     * Benchmarks the code's execution time.
-     * The method performs a warm-up phase followed by a number of iterations (which we set at 1000, gives a wide range of output to see the performance).,
-     * We then measure the execution time with System.nanoTime().
-     *
-     * @param input The array to sort.
-     * @param iterations The number of timed iterations.
-     * @return The average execution time per iteration in nanoseconds.
+     * benchmarkPseudoSort: measures average runtime, reusing arrays to remove GC overhead
      */
     public static long benchmarkPseudoSort(int[] input, int iterations) {
-        long totalTime = 0;
-        // Warm-up phase: run a fraction of iterations to allow JVM optimizations, allowing us to get the best performance out of the code.
-        int warmup = iterations / 10;
-        for (int i = 0; i < warmup; i++) {
-            fastSortPseudo(input);
+        // 1) find min & max in O(n) — exactly as paper requires :contentReference[oaicite:4]{index=4}&#8203;:contentReference[oaicite:5]{index=5}
+        int max = input[0];
+        int min = input[0];
+        for (int i = 1; i < input.length; i++) {
+            int cur = input[i];
+            if (cur > max) max = cur;
+            if (cur < min) min = cur;
         }
-        // Timed iterations.
+        int offset = Math.max(max, Math.abs(min));  // maps negatives to [0..offset]
+
+        // 2) pre-alloc arrays once per size (avoid new int[] in each run) — matches Paper’s single allocation per size :contentReference[oaicite:6]{index=6}&#8203;:contentReference[oaicite:7]{index=7}
+        int[] b      = new int[offset + 1];
+        int[] countp = new int[offset + 1];
+        int[] k      = new int[offset + 1];
+        int[] countn = new int[offset + 1];
+
+        long totalTime = 0;
+        int warmup = iterations / 10;  // warm-up portion to trigger JIT
+
+        // warm-up runs (not timed)
+        for (int i = 0; i < warmup; i++) {
+            Arrays.fill(b, 0);      // clear counts :contentReference[oaicite:8]{index=8}&#8203;:contentReference[oaicite:9]{index=9}
+            Arrays.fill(countp, 0);
+            Arrays.fill(k, 0);
+            Arrays.fill(countn, 0);
+            fastSortPseudo(input, offset, b, countp, k, countn);
+        }
+
+        // timed runs
         for (int i = 0; i < iterations; i++) {
+            Arrays.fill(b, 0);      // reset before each run
+            Arrays.fill(countp, 0);
+            Arrays.fill(k, 0);
+            Arrays.fill(countn, 0);
             long start = System.nanoTime();
-            fastSortPseudo(input);
+            fastSortPseudo(input, offset, b, countp, k, countn);
             long end = System.nanoTime();
             totalTime += (end - start);
         }
-        return totalTime / iterations;
+
+        return totalTime / iterations;  // average ns per iteration
     }
 
-    //Below is the utility method to generate a random array of integers, based on the min and max values.
+    // utility to produce random test arrays
     public static int[] generateRandomArray(int size, int minValue, int maxValue, Random rand) {
         int[] array = new int[size];
         for (int i = 0; i < size; i++) {
@@ -134,20 +131,14 @@ public class FastSort {
     }
 
     public static void main(String[] args) {
-        // Define input sizes for benchmarking.
         int[] sizes = {10, 100, 1000, 10000, 100000};
         Random rand = new Random();
 
-        
-        
-
-
         for (int size : sizes) {
-            int iterations = size < 1000 ? 1000 : 100;
+            int iterations = size < 1000 ? 1000 : 100;  // more runs for small n
 
-            // Generate a random array with values in [-10000000, 10000000].
             int[] testArray = generateRandomArray(size, -10000000, 10000000, rand);
-            long avgTime = benchmarkPseudoSort(testArray, iterations);
+            long avgTime = benchmarkPseudoSort(testArray, iterations);  // CAPTURE avg runtime
             System.out.println("Size: " + size
                     + " | Average execution time: " + avgTime + " ns ("
                     + (avgTime / 1e9) + " s) over " + iterations + " iterations.");
