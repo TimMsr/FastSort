@@ -9,10 +9,10 @@ import java.util.*;
 public class BenchmarkSuite {
 
     // Config
-    private static final int[] SIZES = {1_000, 5_000, 10_000, 25_000, 50_000, 100_000};
+    private static final int[] SIZES = {10, 100, 1_000, 10_000, 100_000};
     private static final int WARM_UPS = 2;
     private static final int TRIALS = 3;
-    private static final int INT_RANGE = 100_000;
+    private static final int INT_RANGE = 99_999_999;
 
     private static final Random RAND = new Random();
 
@@ -22,7 +22,6 @@ public class BenchmarkSuite {
 
         InputPattern[] patterns = InputPattern.values();
         Sorter[] sorters = {
-                new FastSorter(),
                 new TimSorter(),
                 new QuickSorter(),
                 new MergeSorter(),
@@ -122,12 +121,6 @@ public class BenchmarkSuite {
     }
 
     // Adapters to concrete algorithms
-    static class FastSorter implements Sorter {
-        public void sort(int[] data) {
-            int[] sorted = FastSort.fastSort(data);
-            System.arraycopy(sorted, 0, data, 0, data.length);
-        }
-        public String name(){return"FastSort";} }
 
     static class TimSorter implements Sorter {
         public void sort(int[] d){TimSort.timSort(d);}
