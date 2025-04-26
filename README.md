@@ -4,7 +4,7 @@ Instructions for running the code:
 3. Run the code: java FastSort
 
 To see the sorted array:
-1. The output will only display the performance output, if you want to verify the correct output, you need to uncomment the sb.tostring line (or incorprate your own print method)
+1. The output will only display the performance output, if you want to verify the correct output, you need to uncomment the sb.tostring line (seen in line 76 of fastsort.java or incorprate your own print method)
 Make sure to adjust the sizes of the array, due to the high sizes of inputs.
 
 To reproduce the results:
